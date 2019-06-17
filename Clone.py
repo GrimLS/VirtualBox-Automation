@@ -40,15 +40,15 @@ for key, dict in vm_dict.items():
         xMint_ID = key
 
 # determine clone name (edit trailing string to change suffix but do not use a space as separator)
-c_name = base_vm_name + "_Clone"
+c_name = base_vm_name + " Clone"
 
 # take snapshot to create linked clone from
 print("Taking snapshot of base vm:")
-snapshot_uuid = f.create_snapshot("xMint Base", "Python Snapshot")
+snapshot_uuid = f.create_snapshot(base_vm_name, "Python Snapshot")
 print("\n")
 
-# fetch snapshot uuid from function (This is redundent if creating new snapshot to clone from)
-snapshot_uuid = f.list_snapshots("xMint Base", "Python Snapshot")
+# fetch snapshot uuid from function (This is redundent if creating a new snapshot to clone from)
+snapshot_uuid = f.list_snapshots(base_vm_name, "Python Snapshot")
 snapshot_uuid = snapshot_uuid["UUID"]
 
 # run cmd to clone vm

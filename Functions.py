@@ -5,7 +5,7 @@ import sys
 
 def list_vms():
 # assigning variables
-    quote_count = 0
+    count = 0
     vm_dict = dict()
     names = list()
     uuids = list()
@@ -14,44 +14,62 @@ def list_vms():
 # collecting and parsing cmd output
     vms = subprocess.check_output(["C:\Program Files\Oracle\VirtualBox\VBoxManage.exe", "list", "vms"])
     vms = vms.decode()
-    vms = vms.split()
-# spliting up decoded vms output
-    if len(vms) > 3:
-        vms_len = len(vms)
-        vms_len = vms_len / 3
-        start = 0
-        stop = 2
-# backup of above if statement in the event that there is only one vm currently listed
-    else:
-        vms_len = len(vms)
-        vms_len = vms_len / 3
-        start = 0
-        stop = 2
-# separating names from vms into their own list
-    while vms_len > 0:
-        vms_len -= 1
-        names.append(vms[start:stop])
-        start += 3
-        stop += 3
-# separating uuids from vms into their own list
+    vms = vms.replace("\r", "")
+    vms = vms.split("\n")
+    print(vms)
     for i in vms:
-        if "1" in i:
-            uuids.append(i)
-# clean up names
-    for name in names:
-        name = " ".join(name)
-        name = name.strip('"')
-        c_names.append(name)
-# clean up uuids
-    for uuid in uuids:
-        uuid = uuid.strip("{")
-        uuid = uuid.strip("}")
-        c_uuids.append(uuid)
-# creating dictionary from names and uuid lists with the name as the key
-    for i in range(len(c_names)):
-        vm_dict[i + 1] = {"Name" : c_names[i], "UUID" : c_uuids[i]}
-# returning complete dictionary
-    return vm_dict
+        count += 1
+        if i == "":
+            continue
+        i = i.replace("}", "")
+        i = i.split("{")
+        i[0] = i[0].strip()
+        i[0] = i[0].strip('"')
+        vm_dict[count] = {"Name" : i[0], "UUID" : i[1]}
+    print(vm_dict)
+#    print(len(vms))
+#    print(vms)
+#    if len(vms) % 4 == 0:
+#        print(vms)
+## spliting up decoded vms output
+#    else:
+#        if len(vms) > 3:
+#            vms_len = len(vms)
+#            vms_len = vms_len / 3
+#            start = 0
+#            stop = 2
+## backup of above if statement in the event that there is only one vm currently listed
+#        else:
+#            vms_len = len(vms)
+#            vms_len = vms_len / 3
+#            start = 0
+#            stop = 2
+## separating names from vms into their own list
+#    while vms_len > 0:
+#        vms_len -= 1
+#        names.append(vms[start:stop])
+#        start += 3
+#        stop += 3
+## separating uuids from vms into their own list
+#    for i in vms:
+#        if "1" in i:
+#            uuids.append(i)
+## clean up names
+#    for name in names:
+#        name = " ".join(name)
+#        name = name.strip('"')
+#        c_names.append(name)
+## clean up uuids
+#    for uuid in uuids:
+#        uuid = uuid.strip("{")
+#        uuid = uuid.strip("}")
+#        c_uuids.append(uuid)
+## creating dictionary from names and uuid lists with the name as the key
+#    print(c_names, c_uuids, vm_dict)
+##    for i in range(len(c_names)):
+##        vm_dict[i + 1] = {"Name" : c_names[i], "UUID" : c_uuids[i]}
+## returning complete dictionary
+#    return vm_dict
 
 
 def create_snapshot(vm_name, snapshot_name):
@@ -104,3 +122,5 @@ def egg():
         for i in lyrics:
             i = i.strip("\n")
             print(i)
+
+list_vms()
