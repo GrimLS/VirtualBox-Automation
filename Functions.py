@@ -54,8 +54,18 @@ def list_vms():
     return vm_dict
 
 
-def list_snapshots(vm_name):
-# assigning variables
+def create_snapshot(vm_name, snapshot_name):
+    output = subprocess.check_output(["C:\Program Files\Oracle\VirtualBox\VBoxManage.exe", "snapshot", vm_name, "take", snapshot_name, "--description", "Snapshot taken by Python script"])
+# decode and clean up output
+    output = output.decode()
+    output = output.replace("\r", "")
+# isolate uuid from output
+    start = (int(output.find(":"))) + 2
+    uuid = output[start: -1]
+    return uuid
+
+
+def list_snapshots(vm_name, snapshot_name):
 # collecting and parsing cmd output
     vm_snapshots = subprocess.check_output(["C:\Program Files\Oracle\VirtualBox\VBoxManage.exe", "snapshot", vm_name, "list"])
     vm_snapshots = vm_snapshots.decode()
@@ -63,7 +73,7 @@ def list_snapshots(vm_name):
     vm_snapshots = vm_snapshots.split("\n")
 # clean up output
     for i in vm_snapshots:
-        if "N-xMint" in i:
+        if snapshot_name in i:
             start = (int(i.find("("))) + 1
             stop = int(i.find(")"))
             snapshot_uuid = i[start: stop]
@@ -94,5 +104,3 @@ def egg():
         for i in lyrics:
             i = i.strip("\n")
             print(i)
-
-print(list_vms())
